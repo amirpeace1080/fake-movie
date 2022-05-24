@@ -6,7 +6,7 @@
           lg="3"
           sm="6"
           cols="12"
-          v-for="(movie, index) in movieDetail.data"
+          v-for="(movie, index) in tool.slice(index, 16)"
           :key="index"
         >
           <div class="movie-card">
@@ -29,7 +29,7 @@
               <div class="movie-info">
                 <div class="info-section">
                   <label>Date &amp; Time</label>
-                  <span>{{movie.crawled_at}}</span>
+                  <span>{{ movie.crawled_at }}</span>
                 </div>
                 <!--date,time-->
                 <div class="info-section">
@@ -58,9 +58,11 @@
     <!-- start pagging -->
     <div class="text-center">
       <v-pagination
+        circle
         v-model="page"
-        :length="15"
+        :length="Math.round(tool.length / 16)"
         :total-visible="7"
+        @next="nextPage"
       ></v-pagination>
     </div>
     <!-- end pagging -->
@@ -72,7 +74,13 @@ export default {
   data() {
     return {
       page: 1,
+      tool: [],
     };
+  },
+  methods: {
+    nextPage() {
+      console.log(this.tool.splice(0, 16));
+    },
   },
   computed: {
     movieDetail() {
@@ -83,7 +91,7 @@ export default {
     // this.loading = true
     this.$store.dispatch("loadMovieDetail").then((res) => {
       //   this.loading = false
-      res.data;
+      this.tool = res.data.data;
     });
   },
 };
