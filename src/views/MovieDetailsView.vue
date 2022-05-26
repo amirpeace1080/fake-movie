@@ -1,71 +1,84 @@
 <template>
   <div>
-    <v-container>
-      <v-row>
-        <v-col
-          lg="3"
-          sm="6"
-          cols="12"
-          v-for="(movie, index) in tool.slice(index, 16)"
-          :key="index"
-        >
-          <div class="movie-card">
-            <div class="movie-header babyDrive">
-              <img class="image-movie" :src="movie.poster" alt="" srcset="" />
-              <div class="header-icon-container">
-                <a href="#">
-                  <i class="material-icons header-icon">&#xE037;</i>
-                </a>
+    <router-view />
+    <div class="myList">
+      <v-container>
+        <v-row>
+          <v-col
+            lg="3"
+            sm="6"
+            cols="12"
+            v-for="(movie, index) in lists"
+            :key="index"
+          >
+            <router-link
+              :to="{
+                name: 'movie.info',
+                params: {
+                  direct: movie.directed_by,
+                  pic: movie.poster,
+                  title: movie.title,
+                  link: movie.url,
+                  create: movie.crawled_at,
+                  description: movie.description,
+                  poster: movie.poster,
+                },
+              }"
+            >
+              <div class="movie-card">
+                <div class="movie-header babyDrive">
+                  <img
+                    class="image-movie"
+                    :src="movie.poster"
+                    alt=""
+                    srcset=""
+                  />
+                  <div class="header-icon-container"></div>
+                </div>
+                <!--movie-header-->
+                <div class="movie-content">
+                  <div class="movie-content-header">
+                    <a href="#">
+                      <h3 class="movie-title">{{ movie.title }}</h3>
+                    </a>
+                    <div class="imax-logo"></div>
+                  </div>
+                  <div class="movie-info">
+                    <div class="info-section">
+                      <label>Date &amp; Time</label>
+                      <span>{{ movie.crawled_at }}</span>
+                    </div>
+                    <!--date,time-->
+                    <div class="info-section">
+                      <label>Screen</label>
+                      <span>01</span>
+                    </div>
+                    <!--screen-->
+                    <div class="info-section">
+                      <label>Row</label>
+                      <span>H</span>
+                    </div>
+                    <!--row-->
+                    <div class="info-section">
+                      <label>Seat</label>
+                      <span>15</span>
+                    </div>
+                    <!--seat-->
+                  </div>
+                </div>
+                <!--movie-content-->
               </div>
-            </div>
-            <!--movie-header-->
-            <div class="movie-content">
-              <div class="movie-content-header">
-                <a href="#">
-                  <h3 class="movie-title">{{ movie.title }}</h3>
-                </a>
-                <div class="imax-logo"></div>
-              </div>
-              <div class="movie-info">
-                <div class="info-section">
-                  <label>Date &amp; Time</label>
-                  <span>{{ movie.crawled_at }}</span>
-                </div>
-                <!--date,time-->
-                <div class="info-section">
-                  <label>Screen</label>
-                  <span>01</span>
-                </div>
-                <!--screen-->
-                <div class="info-section">
-                  <label>Row</label>
-                  <span>H</span>
-                </div>
-                <!--row-->
-                <div class="info-section">
-                  <label>Seat</label>
-                  <span>15</span>
-                </div>
-                <!--seat-->
-              </div>
-            </div>
-            <!--movie-content-->
-          </div>
-        </v-col>
-      </v-row>
-    </v-container>
-
-    <!-- start pagging -->
-    <div class="text-center">
-      <v-pagination
-        circle
-        v-model="page"
-        :length="Math.round(tool.length / 16)"
-        :total-visible="7"
-        @next="nextPage"
-      ></v-pagination>
+            </router-link>
+          </v-col>
+        </v-row>
+      </v-container>
+      <b-pagination
+        class="pagging"
+        :total-rows="totalRows"
+        v-model="currentPage"
+        :per-page="perPage"
+      />
     </div>
-    <!-- end pagging -->
   </div>
 </template>
 
@@ -73,25 +86,32 @@
 export default {
   data() {
     return {
-      page: 1,
-      tool: [],
+      data: [],
+      currentPage: 1,
+      perPage: 16,
     };
-  },
-  methods: {
-    nextPage() {
-      console.log(this.tool.splice(0, 16));
-    },
   },
   computed: {
     movieDetail() {
       return this.$store.state.movieDetail.data;
+    },
+    lists() {
+      const items = this.data;
+      // Return just page of items needed
+      return items.slice(
+        (this.currentPage - 1) * this.perPage,
+        this.currentPage * this.perPage
+      );
+    },
+    totalRows() {
+      return this.data.length;
     },
   },
   created() {
     // this.loading = true
     this.$store.dispatch("loadMovieDetail").then((res) => {
       //   this.loading = false
-      this.tool = res.data.data;
+      this.data = res.data.data;
     });
   },
 };
@@ -295,5 +315,11 @@ a:hover {
 .image-movie {
   width: 100%;
   height: 100%;
+}
+
+.pagging {
+  margin-left: auto;
+  margin-right: auto;
+  width: 40%;
 }
 </style>

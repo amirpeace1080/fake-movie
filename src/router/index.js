@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import movieDetailView from '../views/MovieDetailsView.vue'
+import InfoMovie from '../components/movieDetail/InfoMovie.vue'
 
 Vue.use(VueRouter)
 
@@ -14,7 +15,14 @@ const routes = [
   {
     path: '/movieDetail',
     name: 'movieDetail',
-    component: movieDetailView
+    component: movieDetailView,
+    children: [
+      {
+        path: '/movieDetail/info',
+        name: 'movie.info',
+        component: InfoMovie
+      }
+    ]
   }
 ]
 
