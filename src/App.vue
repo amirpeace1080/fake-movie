@@ -1,22 +1,24 @@
 <template>
   <div id="app">
     <Navbar />
-    <!-- <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/movieDetail">MovieDetails</router-link>
-    </nav> -->
     <router-view />
+    <Footer />
   </div>
 </template>
 
 <script>
 import Navbar from './components/Navbar.vue'
+import Footer from './components/Footer.vue'
 
 export default {
   name: "App",
   components: {
-    Navbar
+    Navbar,
+    Footer,
   },
+  created() {
+    alert('لطفا برای بهتر کار کردن سایت فیلتر شکن خود را روشن کنید')
+  }
 };
 </script>
 
